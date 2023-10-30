@@ -9,8 +9,11 @@ const storage = require("../utilities/fileuploader");
 const upload = multer({ storage });
 
 postRoute.route("/").post(upload.single("file"), async (req, res) => {
-  const publicKey = randomstring.generate();
-  const privateKey = randomstring.generate();
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  const publicKey = req.file.filename;
+  const privateKey = req.file.path;
   res.json({ "public key": publicKey, "private key": privateKey });
 });
 

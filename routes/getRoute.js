@@ -1,8 +1,11 @@
 const express = require("express");
 const getRoute = express.Router();
 
-getRoute.route("/gt").get(async (req, res) => {
-  res.send("Hello get");
+getRoute.route("/:publicKey").get(async (req, res) => {
+  const publicKey = req.params.publicKey;
+  const file = `FOLDER/${publicKey}`;
+  console.log(file);
+  res.download(file);
 });
 
 module.exports = getRoute;
