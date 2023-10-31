@@ -12,9 +12,10 @@ postRoute.route("/").post(upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
-  const publicKey = req.file.filename;
-  const privateKey = req.file.path;
-  res.json({ "public key": publicKey, "private key": privateKey });
+  res.json({
+    "public key": req.file.filename,
+    "private key": req.file.filename,
+  });
 });
 
 module.exports = postRoute;
