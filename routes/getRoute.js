@@ -4,8 +4,10 @@ const mime = require("mime");
 const fs = require("fs");
 const getRoute = express.Router();
 const path = require("path");
+const { downloadLimiter } = require("../middleware/networkLimit");
 
-getRoute.route("/:publicKey").get(async (req, res) => {
+// make downloaderLimit as a middleware
+getRoute.route("/:publicKey").get(downloadLimiter, async (req, res) => {
   // Make the file path
   const filePath = path.join("FOLDER", req.params.publicKey);
 
