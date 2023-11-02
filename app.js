@@ -36,3 +36,5 @@ cron.schedule("0 0 * * *", () => {
 server.listen(process.env.PORT, () => {
   console.log(`Listening to the post ${process.env.PORT}`);
 });
+
+module.exports = app;

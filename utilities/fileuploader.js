@@ -11,13 +11,7 @@ const storage = multer.diskStorage({
     const fileExtention = path.extname(file.originalname);
 
     const fileName =
-      file.originalname
-        .replace(fileExtention, "")
-        .toLocaleLowerCase()
-        .split(" ")
-        .join("-") +
-      "-" +
-      Date.now() +
+      file.originalname.replace(fileExtention, "").split(" ").join("-") +
       fileExtention;
     cb(null, fileName);
   },
