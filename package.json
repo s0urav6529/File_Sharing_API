@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
-    "test": "mocha test/integration/fileRoutes.test.js"
+    "test": "mocha test/integration_unit/integrationAndUnit.test.js"
   },
   "author": "sourav majumder",
   "license": "ISC",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "chai": "^4.3.10",
+    "chai-http": "^4.4.0",
     "mocha": "^10.2.0",
     "supertest": "^6.3.3"
   }
