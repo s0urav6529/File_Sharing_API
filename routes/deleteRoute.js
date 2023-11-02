@@ -1,31 +1,12 @@
+//external module
 const express = require("express");
 const deleteRoute = express.Router();
-const fs = require("fs");
-const path = require("path");
 
-deleteRoute.route("/:privateKey").delete(async (req, res) => {
-  // make the file path
-  const filePath = path.join("FOLDER", req.params.privateKey);
+//internal module
+const deleteResponse = require("../controllers/deleteController");
 
-  try {
-    await fs.access(filePath, fs.constants.F_OK, (error) => {
-      if (error) {
-        res
-          .status(404)
-          .json({ error: `The file ${req.params.privateKey} does not exist` });
-      } else {
-        fs.unlink(filePath, (error) => {
-          if (error) {
-            res.status(500).json({ error: "Failed during file deletation" });
-          } else {
-            res.status(200).json({ error: "File deleted successfully" });
-          }
-        });
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+//route to use
+deleteRoute.route("/:privateKey").delete(deleteResponse);
 
+// export
 module.exports = deleteRoute;

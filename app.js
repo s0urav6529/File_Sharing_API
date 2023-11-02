@@ -9,7 +9,7 @@ const cron = require("node-cron");
 const postRoute = require("./routes/postRoute");
 const getRoute = require("./routes/getRoute");
 const deleteRoute = require("./routes/deleteRoute");
-const fileCleanupCheck = require("./controllers/fileCleanupCheck");
+const fileCleanupCheck = require("./utilities/fileCleanupCheck");
 
 // use express
 const app = express();
