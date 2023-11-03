@@ -118,16 +118,16 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
       cb(null, uploadFolder);
     },
     filename: (req, file, cb) => {
-      const fileExtention = path.extname(file.originalname);
-      const originalFileName = file.originalname;
-      let fileName;
-      if (originalFileName.startsWith("tmp")) {
-        // for testing purpose of code
-        fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") +fileExtention;
-      } else {
-      // for actual code
-        fileName =  originalFileName.replace(fileExtention, "").split(" ").join("-") + "-" +  Date.now() + fileExtention;
-      }
+        const fileExtention = path.extname(file.originalname);
+         const originalFileName = file.originalname;
+        let fileName;
+        if (originalFileName.startsWith("testfile")) {
+            // for testing purpose of code
+            fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") + fileExtention;
+        } else {
+            // for actual code
+            fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") + "-" + Date.now() + fileExtention;
+        }
       cb(null, fileName);
     },
 
