@@ -355,11 +355,11 @@ To perform integration tests, we use the following tools and libraries:
   3. Verify that the API returns a status code of 200.
 - Expected Outcome: The file should be uploaded successfully.
 
-  it("should upload a file", (done) => {
-  tmp.file((error, filePath) => {
-  if (error) {
-  return done(err);
-  }
+        it("should upload a file", (done) => {
+            tmp.file((error, filePath) => {
+                if (error) {
+            return done(err);
+        }
 
         const temporyFilePath = filePath + ".txt";
         const parts = temporyFilePath.split("/");
@@ -393,17 +393,17 @@ To perform integration tests, we use the following tools and libraries:
   2. Verify that the API returns a status code of 200 and the correct MIME type.
 - Expected Outcome: The file should be successfully downloaded with the correct MIME type.
 
-  it("should download a file", (done) => {
-  request(app).get(`/files/${publicKey}`) .expect(200) .end((error, res) => {
-  if (error) {
-  return done(error);
-  }
-  const fileExtension = path.extname(publicKey).slice(1);
-  const mimeType = mime.getType(fileExtension);
-  expect(res.headers["content-type"]).to.equal(mimeType);
-  done();
-  });
-  });
+        it("should download a file", (done) => {
+            request(app).get(`/files/${publicKey}`) .expect(200) .end((error, res) => {
+                if (error) {
+                return done(error);
+            }
+            const fileExtension = path.extname(publicKey).slice(1);
+                const mimeType = mime.getType(fileExtension);
+                expect(res.headers["content-type"]).to.equal(mimeType);
+                done();
+            });
+        });
 
 #### 3. Deleting a File
 
@@ -413,14 +413,14 @@ To perform integration tests, we use the following tools and libraries:
   2. Verify that the API returns a status code of 200.
 - Expected Outcome: The file should be deleted successfully.
 
-  it("should delete a file", (done) => {
-  request(app) .delete(`/files/${privateKey}`) .expect(200) .end((error) => {
-  if (error) {
-  return done(error);
-  }
-  done();
-  });
-  });
+        it("should delete a file", (done) => {
+            request(app) .delete(`/files/${privateKey}`) .expect(200) .end((error) => {
+                if (error) {
+                    return done(error);
+                }
+                done();
+            });
+        });
 
 ## Unit Testing
 
@@ -461,22 +461,22 @@ Unit testing focuses on testing individual functions and components of the API i
       await uploadResponse(req, res);
       });
 
-      it("should return a 400 status with an error message if no file is uploaded", async () => {
-      const req = {};
-      const res = {
-      json: (data) => {
-      expect(data).to.deep.equal({ error: "No file uploaded" });
-      },
-      status: (statusCode) => {
-      expect(statusCode).to.equal(400);
-      return res;
-      },
-      };
-      await uploadResponse(req, res);
+            it("should return a 400 status with an error message if no file is uploaded", async () => {
+            const req = {};
+            const res = {
+            json: (data) => {
+            expect(data).to.deep.equal({ error: "No file uploaded" });
+            },
+            status: (statusCode) => {
+            expect(statusCode).to.equal(400);
+            return res;
+            },
+            };
+            await uploadResponse(req, res);
+
+            });
 
       });
-
-  });
 
 #### getResponse
 
