@@ -2,6 +2,14 @@
 
 MY Node.js application is a basic API server built using Express.js. It provides endpoints for uploading files, retrieving a list of files, and deleting files. Additionally, it includes a scheduled task using node-cron for file cleanup.
 
+## For start the API use command
+
+    npm start
+
+## For unit & integration test the API use command
+
+    npm test
+
 ## Application Structure
 
 ### My application consists of the following components:
