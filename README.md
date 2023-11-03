@@ -10,7 +10,7 @@ MY Node.js application is a basic API server built using Express.js. It provides
 
 **My application consists of the following components:**
 
-****External Modules:**** I have imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance your API.
+****External Modules:**** I have imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance my API.
 
 ****Internal Modules:**** I've organized your application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
 
@@ -36,7 +36,7 @@ app.use("/files", deleteRoute);
 
 **I've configured middleware to enhance your API's functionality:**
 
-****JSON and URL Encoding:**** I use the express.json() middleware to parse JSON request bodies and bodyParser.urlencoded() middleware to handle URL-encoded data in requests.
+****JSON and URL Encoding:**** I use the express.json() middleware to parse JSON request bodies and **bodyParser.urlencoded()** middleware to handle URL-encoded data in requests.
 
 // json body parser
 app.use(express.json());
@@ -55,11 +55,45 @@ cron.schedule("0 0 * * *", () => {
 
 ******Deployment******
 
-The application listens on a port specified in your environment variables (retrieved using process.env.PORT). This is where clients can connect to access your API.
+The application listens on a port specified in my environment variables (retrieved using process.env.PORT). This is where clients can connect to access my API.
 
 server.listen(process.env.PORT, () => {
 
   console.log(`Listening to the post ${process.env.PORT}`);
   
 });
+
+
+**postRoute endpoint description**
+
+The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
+
+**Dependencies**
+
+**External Modules**
+
+**express**: The Express.js framework for building web applications.
+**randomstring**: A module used for generating random strings.
+**multer**: A middleware for handling file uploads.
+
+**Internal Modules**
+**storage**: A custom middleware for handling file storage, presumably for configuring where uploaded files are stored.
+**uploadLimiter**: A custom middleware for rate limiting incoming requests, to prevent network abuse.
+**uploadResponse**: A controller responsible for handling the file upload process.
+
+
+**Middleware**
+
+**uploadLimiter**: Applied to the POST / route, this middleware limits the number of incoming requests to prevent network abuse.
+
+**multer with storage:** Used to configure the file storage settings for handling file uploads.
+
+**Controller**
+
+**uploadResponse**: This controller is responsible for handling the logic and response generation for file uploads. It is executed after a file is successfully uploaded.
+
+**Error Handling**
+
+Any errors that occur during the request handling process, such as exceeding rate limits, file upload failures, or processing errors within the uploadResponse controller, should be appropriately handled and may result in error responses sent to the client.
+
 
