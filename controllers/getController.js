@@ -9,7 +9,7 @@ const getResponse = async (req, res) => {
   const filePath = path.join("FOLDER", req.params.publicKey);
 
   try {
-    await fs.access(filePath, fs.constants.F_OK, (error) => {
+    fs.access(filePath, fs.constants.F_OK, (error) => {
       if (error) {
         res
           .status(404)

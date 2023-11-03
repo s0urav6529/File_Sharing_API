@@ -161,7 +161,7 @@ The gostRoute is an Express.js router designed to handle GET requests to retriev
 **fs**: Used to access and stream the file to the client.
 **mime**: Used to determine the MIME type of the file based on its extension.
 
-**MIME Type Determination**: The postRoute function uses the "mime" library to determine the MIME type of the file based on its extension. This ensures that the response includes the correct "Content-Type" header, which helps the client's browser interpret the file correctly.
+**MIME Type Determination**: The getRoute function uses the "mime" library to determine the MIME type of the file based on its extension. This ensures that the response includes the correct "Content-Type" header, which helps the client's browser interpret the file correctly.
 
     const path = require("path");
     const fs = require("fs");
@@ -179,7 +179,7 @@ The gostRoute is an Express.js router designed to handle GET requests to retriev
 
 ### Functionality
 
-The postRoute function performs the following key tasks:
+The gettRoute function performs the following key tasks:
 
 Construct the file path based on the provided public key.
 
@@ -187,12 +187,10 @@ Construct the file path based on the provided public key.
 
 Check if the file specified by the public key exists in the designated folder.
 
-    await fs.access(filePath, fs.constants.F_OK, (error) => {
+    fs.access(filePath, fs.constants.F_OK, (error) => {
       if (error) {
-        res
-          .status(404)
-          .json({ error: `The file ${req.params.publicKey} does not exist` });
-      }
+        res .status(404) .json({ error: `The file ${req.params.publicKey} does not exist` });
+    }
 
 If the file exists, determine its MIME type based on the file extension. Set the response headers to indicate the content type. Create a readable stream for the file and pipe it to the HTTP response.
 
@@ -239,7 +237,7 @@ Checks if the file with the constructed path exists. If the file exists, it atte
     try {
 
         //Restrict cloud database during testing
-        if ( !req.params.privateKey.startsWith("nonexistentfile.txt") && !req.params.privateKey.    startsWith  ("testfile")) {
+        if ( !req.params.privateKey.startsWith("nonexistentfile.txt") && !req.params.privateKey.  startsWith  ("testfile")) {
             await filesModel.deleteOne({ name: req.params.privateKey });
         }
 
