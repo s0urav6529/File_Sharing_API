@@ -360,7 +360,6 @@ To perform integration tests, we use the following tools and libraries:
                 if (error) {
             return done(err);
         }
-
         const temporyFilePath = filePath + ".txt";
         const parts = temporyFilePath.split("/");
         const temporaryFileName = parts[parts.length - 1];
