@@ -25,7 +25,7 @@ I've organized my application into separate modules for different functionality,
     const fileCleanupCheck = require("./utilities/fileCleanupCheck");
 
 ### Express Application Setup
-I initialize your **Express** application by creating an instance of it and setting up necessary **middleware**.
+I initialize my **Express** application by creating an instance of it and setting up necessary **middleware**.
 
     const app = express();
 
@@ -286,7 +286,14 @@ To perform integration tests, we use the following tools and libraries:
 - **tmp**: A library for creating temporary files and directories.
 - **path**: Node.js's path module for working with file paths.
 
-### Integration Test Suite
+      const request = require("supertest");
+      const chai = require("chai");
+      const chaiHttp = require("chai-http");
+      const fs = require("fs");
+      const mime = require("mime");
+      const tmp = require("tmp");
+      const path = require("path");
+
 
 #### 1. Uploading a File
 
@@ -297,6 +304,36 @@ To perform integration tests, we use the following tools and libraries:
   3. Verify that the API returns a status code of 200.
 - Expected Outcome: The file should be uploaded successfully.
 
+        it("should upload a file", (done) => {
+            tmp.file((error, filePath) => {
+              if (error) {
+                return done(err);
+           }
+
+          const temporyFilePath = filePath + ".txt";
+          const parts = temporyFilePath.split("/");
+          const fileName = parts[parts.length - 1];
+
+          const originalFilePath = path.join("FOLDER", fileName);
+
+          console.log(originalFilePath);
+          const randomContent = "This is random content.";
+
+          fs.writeFileSync(originalFilePath, randomContent);
+          request(app) .post("/files")  .attach("file", originalFilePath)  .expect(200)  .end((error, res) => {
+              if (error) {
+                return done(error);
+              }
+
+              publicKey = fileName;
+              privateKey = fileName;
+              console.log(fileName);
+              done();
+            });
+        });
+      });
+  
+
 #### 2. Downloading a File
 
 - Test Description: This test checks the ability to download a file by its public key.
@@ -305,6 +342,18 @@ To perform integration tests, we use the following tools and libraries:
   2. Verify that the API returns a status code of 200 and the correct MIME type.
 - Expected Outcome: The file should be successfully downloaded with the correct MIME type.
 
+      it("should download a file", (done) => {
+        request(app).get(`/files/${publicKey}`) .expect(200) .end((error, res) => {
+            if (error) {
+              return done(error);
+            }
+            const fileExtension = path.extname(publicKey).slice(1);
+            const mimeType = mime.getType(fileExtension);
+            expect(res.headers["content-type"]).to.equal(mimeType);
+            done();
+          });
+      });
+
 #### 3. Deleting a File
 
 - Test Description: This test verifies the ability to delete a file by its private key.
@@ -312,6 +361,15 @@ To perform integration tests, we use the following tools and libraries:
   1. Send an HTTP DELETE request to the API with the private key of the file to delete.
   2. Verify that the API returns a status code of 200.
 - Expected Outcome: The file should be deleted successfully.
+
+      it("should delete a file", (done) => {
+        request(app) .delete(`/files/${privateKey}`)  .expect(200)  .end((error) => {
+            if (error) {
+              return done(error);
+            }
+            done();
+              });
+      });
 
 ## Unit Testing
 
