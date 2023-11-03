@@ -46,22 +46,20 @@ I initialize your **Express** application by creating an instance of it and sett
 
 ### Middleware
 
-**I've configured middleware to enhance your API's functionality:**
-
-****JSON and URL Encoding:**** I use the express.json() middleware to parse JSON request bodies and **bodyParser.urlencoded()** middleware to handle URL-encoded data in requests.
+**JSON and URL Encoding:** I use the express.json() middleware to parse JSON request bodies and **bodyParser.urlencoded()** middleware to handle URL-encoded data in requests.
 
     // json body parser
     app.use(express.json());
     app.use(bodyParser.urlencoded({ extended: true }));
 
-****Scheduled Task:**** I have implemented a scheduled task using node-cron. This task runs at midnight (00:00) every day and is responsible for cleaning up files that have been inactive for seven days. The fileCleanupCheck function handles this task.
+**Scheduled Task:** I have implemented a scheduled task using node-cron. This task runs at midnight (00:00) every day and is responsible for cleaning up files that have been inactive for seven days. The fileCleanupCheck function handles this task.
 
     cron.schedule("0 0 * * *", () => {
       const cleanupPeriod = 7 * 24 * 60 * 60 * 1000; 
       fileCleanupCheck(cleanupPeriod);
     });
 
-******Deployment******
+### Deployment
 
 The application listens on a port specified in my environment variables (retrieved using process.env.PORT). This is where clients can connect to access my API.
 
@@ -72,7 +70,7 @@ The application listens on a port specified in my environment variables (retriev
 
 
 
-**PostRoute Endpoint Description-----**
+## PostRoute Endpoint Description
 
 The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
 
