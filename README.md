@@ -16,14 +16,15 @@ Imported external modules such as **body-parser, express, dotenv, http, and node
     const http = require("http");
     const cron = require("node-cron");
 
-I've organized my application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute,databaseConnection and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.And databaseConnection is used for connect cloud storage (mongo Atlas).
+I've organized my application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute,databaseConnection and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.And **databaseConnection** is used for connect cloud storage (Mongo Atlas).
 
     const databaseConnection = require("./configuration/databaseConnection");
     const postRoute = require("./routes/postRoute");
     const getRoute = require("./routes/getRoute");
     const deleteRoute = require("./routes/deleteRoute");
     const fileCleanupCheck = require("./utilities/fileCleanupCheck");
-    databaseConnection();
+
+    databaseConnection();       //for connect database to my app
 
 ### Express Application Setup
 
@@ -56,51 +57,51 @@ I initialize my **Express** application by creating an instance of it and settin
 **Scheduled Task:** I have implemented a scheduled task using node-cron. This task runs at midnight (00:00) every day and is responsible for cleaning up files that have been inactive for seven days. The fileCleanupCheck function handles this task.
 
     cron.schedule("0 0 * * *", () => {
-      const cleanupPeriod = 7 * 24 * 60 * 60 * 1000;
-      fileCleanupCheck(cleanupPeriod);
+        const cleanupPeriod = 7 * 24 * 60 * 60 * 1000;
+        fileCleanupCheck(cleanupPeriod);
     });
 
 Here, funtions for cleanup inactivefiles files from cloud storage
 
     const remover = async (file) => {
         try {
-         await filesModel.deleteOne({ name: file });
+            await filesModel.deleteOne({ name: file });
         } catch (error) {
-             console.error("Error removing file", error);
+            console.error("Error removing file", error);
         }
     };
 
 That is the called function from main app to do the file cleaner work if any file inactive for a certain period.
 
     const fileCleanupCheck = async (cleanupPeriod) => {
-    const cleanupTimestamp = Date.now() - cleanupPeriod;
+        const cleanupTimestamp = Date.now() - cleanupPeriod;
 
-    fs.readdir(filesPath, (error, files) => {
-        if (error) {
-        console.error("Error reading file directory", error);
-        return;
-        }
+        fs.readdir(filesPath, (error, files) => {
+            if (error) {
+                console.error("Error reading file directory", error);
+                return;
+            }
 
-        files.forEach((file) => {
-        const currentFilePath = `${filesPath}/${file}`;
-        fs.stat(currentFilePath, (statError, stats) => {
-            if (statError) {
-            console.error("Error getting file stats", statError);
-            } else {
-            if (stats.mtimeMs < cleanupTimestamp) {
-                remover(file);
-                fs.unlink(currentFilePath, (removeError) => {
-                if (removeError) {
-                    console.error("Error removing file", removeError);
-                } else {
-                    console.log(`File named ${file} removed successfully`);
-                }
+            files.forEach((file) => {
+                const currentFilePath = `${filesPath}/${file}`;
+                fs.stat(currentFilePath, (statError, stats) => {
+                    if (statError) {
+                        console.error("Error getting file stats", statError);
+                    } else {
+                        if (stats.mtimeMs < cleanupTimestamp) {
+                            remover(file);
+                            fs.unlink(currentFilePath, (removeError) => {
+                                if (removeError) {
+                                    console.error("Error removing file", removeError);
+                                } else {
+                                    console.log(`File named ${file} removed successfully`);
+                                }
+                            });
+                        }
+                    }
                 });
-            }
-            }
+            });
         });
-        });
-    });
     };
 
 ### Deployment
@@ -108,7 +109,7 @@ That is the called function from main app to do the file cleaner work if any fil
 The application listens on a port specified in my environment variables (retrieved using process.env.PORT). This is where clients can connect to access my API.
 
     server.listen(process.env.PORT, () => {
-      console.log(`Listening to the post ${process.env.PORT}`);
+        console.log(`Listening to the post ${process.env.PORT}`);
     });
 
 ## Database Configuration for Cloud Storage
@@ -116,7 +117,7 @@ The application listens on a port specified in my environment variables (retriev
 Use mongo atlas for cloud storage & here is the connection code for configure mongo atlas to our API
 
     const databaseConnection = async () => {
-    mongoose.connect(process.env.MONGOURL)
+        mongoose.connect(process.env.MONGOURL)
         .then(console.log("Database connection established!"))
         .catch((err) => console("Database not connected"));
     };
@@ -149,32 +150,32 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 **uploadLimiter**: Applied to the POST / route, this middleware limits the number of incoming requests to prevent network abuse.
 
     const uploadLimiter = rateLimit({
-      windowMs: time,
-      max: maxlimit,
-      message: "You exit maximum upload per day",
+        windowMs: time,
+        max: maxlimit,
+        message: "You exit maximum upload per day",
     });
 
 **multer with storage:** Used to configure the file storage settings for handling file uploads.
 
     const storage = multer.diskStorage({
-      destination: (req, file, cb) => {
-      cb(null, uploadFolder);
-    },
-    filename: (req, file, cb) => {
-        const fileExtention = path.extname(file.originalname);
-         const originalFileName = file.originalname;
-        let fileName;
-        if (originalFileName.startsWith("testfile")) {
-            // for testing purpose of code
-            fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") + fileExtention;
-        } else {
-            // for actual code
-            fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") + "-" + Date.now() + fileExtention;
-        }
-      cb(null, fileName);
-    },
+        destination: (req, file, cb) => {
+            cb(null, uploadFolder);
+        },
+        filename: (req, file, cb) => {
+            const fileExtention = path.extname(file.originalname);
+            const originalFileName = file.originalname;
+            let fileName;
+            if (originalFileName.startsWith("testfile")) {
+                // for testing purpose of code
+                fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") + fileExtention;
+            } else {
+                // for actual code
+                fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") + "-" + Date.now() + fileExtention;
+            }
+            cb(null, fileName);
+        },
 
-});
+    });
 
 ### Controller
 
@@ -182,7 +183,7 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 
     const uploadResponse = async (req, res) => {
         if (!req.file) {
-           return res.status(400).json({ error: "No file uploaded" });
+            return res.status(400).json({ error: "No file uploaded" });
         }
 
         const fileName = req.file.filename;
@@ -190,13 +191,13 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
         //for testing code neednot use mongo atlas
         if (!fileName.startsWith("testfile")) {
             await filesModel.create({
-            name: req.file.filename,
+                name: req.file.filename,
             });
         }
 
         res.json({
-          "public key": req.file.filename,
-          "private key": req.file.filename,
+            "public key": req.file.filename,
+            "private key": req.file.filename,
         });
     };
 
@@ -225,9 +226,9 @@ The getRoute is an Express.js router designed to handle GET requests to retrieve
 **downloadLimiter**: Applied to the get / route, this middleware limits the number of download requests to prevent network abuse.
 
     const downloadLimiter = rateLimit({
-      windowMs: time,
-      max: maxlimit,
-      message: "You exit maximum download per day",
+        windowMs: time,
+        max: maxlimit,
+        message: "You exit maximum download per day",
     });
 
 ### Functionality
@@ -241,26 +242,26 @@ Construct the file path based on the provided public key.
 Check if the file specified by the public key exists in the designated folder.
 
     fs.access(filePath, fs.constants.F_OK, (error) => {
-      if (error) {
-        res .status(404) .json({ error: `The file ${req.params.publicKey} does not exist` });
-    }
+        if (error) {
+            res .status(404) .json({ error: `The file ${req.params.publicKey} does not exist` });
+        }
 
 If the file exists, determine its MIME type based on the file extension. Set the response headers to indicate the content type. Create a readable stream for the file and pipe it to the HTTP response.
 
-    else {
-        //get the mime type for the current file
-        const fileExtension = path.extname(filePath).slice(1);
+        else {
+            //get the mime type for the current file
+            const fileExtension = path.extname(filePath).slice(1);
 
-        // Determine the MIME type based on the file extension
-        const mimeType = mime.getType(fileExtension);
+            // Determine the MIME type based on the file extension
+            const mimeType = mime.getType(fileExtension);
 
-        // Set the response headers
-        res.setHeader("Content-Type", mimeType);
+            // Set the response headers
+            res.setHeader("Content-Type", mimeType);
 
-        // Create a readable stream and pipe it to the response
-        const fileStream = fs.createReadStream(filePath);
-        fileStream.pipe(res);
-      }
+            // Create a readable stream and pipe it to the response
+            const fileStream = fs.createReadStream(filePath);
+            fileStream.pipe(res);
+        }
     });
 
 ### Error Handling
@@ -295,21 +296,21 @@ Checks if the file with the constructed path exists. If the file exists, it atte
         }
 
         fs.access(filePath, fs.constants.F_OK, (error) => {
-        if (error) {
-            res.status(404).json({ error: `The file ${req.params.privateKey} does not exist` });
-        } else {
-            fs.unlink(filePath, (error) => {
             if (error) {
-                res.status(404).json({error: `The file ${req.params.privateKey} does not exist`,});
+                res.status(404).json({ error: `The file ${req.params.privateKey} does not exist` });
             } else {
-                res.status(200).json({ error: "File deleted successfully" });
+                fs.unlink(filePath, (error) => {
+                    if (error) {
+                        res.status(404).json({error: `The file ${req.params.privateKey} does not exist`,});
+                    } else {
+                        res.status(200).json({ error: "File deleted successfully" });
+                    }
+                });
             }
-         });
-        }
         });
-      } catch (error) {
+    } catch (error) {
         res.status(404).json({ error: `The file ${req.params.privateKey} does not exist` });
-      }
+    }
 
 ### Error Handling
 
@@ -354,12 +355,11 @@ To perform integration tests, we use the following tools and libraries:
   3. Verify that the API returns a status code of 200.
 - Expected Outcome: The file should be uploaded successfully.
 
-        it("should upload a file", (done) => {
-            tmp.file((error, filePath) => {
-              if (error) {
-                return done(err);
-           }
-
+  it("should upload a file", (done) => {
+  tmp.file((error, filePath) => {
+  if (error) {
+  return done(err);
+  }
 
         const temporyFilePath = filePath + ".txt";
         const parts = temporyFilePath.split("/");
@@ -373,16 +373,17 @@ To perform integration tests, we use the following tools and libraries:
 
         fs.writeFileSync(originalFilePath, randomContent);
         request(app) .post("/files")  .attach("file", originalFilePath)  .expect(200)  .end((error, res) => {
-            if (error) {
-                return done(error);
-            }
-            publicKey = fileName;
-            privateKey = fileName;
-            console.log(fileName);
-            done();
+                if (error) {
+                    return done(error);
+                }
+                publicKey = fileName;
+                privateKey = fileName;
+                console.log(fileName);
+                done();
             });
         });
-      });
+
+  });
 
 #### 2. Downloading a File
 
@@ -392,17 +393,17 @@ To perform integration tests, we use the following tools and libraries:
   2. Verify that the API returns a status code of 200 and the correct MIME type.
 - Expected Outcome: The file should be successfully downloaded with the correct MIME type.
 
-      it("should download a file", (done) => {
-        request(app).get(`/files/${publicKey}`) .expect(200) .end((error, res) => {
-            if (error) {
-              return done(error);
-            }
-            const fileExtension = path.extname(publicKey).slice(1);
-            const mimeType = mime.getType(fileExtension);
-            expect(res.headers["content-type"]).to.equal(mimeType);
-            done();
-          });
-      });
+  it("should download a file", (done) => {
+  request(app).get(`/files/${publicKey}`) .expect(200) .end((error, res) => {
+  if (error) {
+  return done(error);
+  }
+  const fileExtension = path.extname(publicKey).slice(1);
+  const mimeType = mime.getType(fileExtension);
+  expect(res.headers["content-type"]).to.equal(mimeType);
+  done();
+  });
+  });
 
 #### 3. Deleting a File
 
@@ -412,14 +413,14 @@ To perform integration tests, we use the following tools and libraries:
   2. Verify that the API returns a status code of 200.
 - Expected Outcome: The file should be deleted successfully.
 
-      it("should delete a file", (done) => {
-        request(app) .delete(`/files/${privateKey}`)  .expect(200)  .end((error) => {
-            if (error) {
-              return done(error);
-            }
-            done();
-              });
-      });
+  it("should delete a file", (done) => {
+  request(app) .delete(`/files/${privateKey}`) .expect(200) .end((error) => {
+  if (error) {
+  return done(error);
+  }
+  done();
+  });
+  });
 
 ## Unit Testing
 
@@ -459,6 +460,7 @@ Unit testing focuses on testing individual functions and components of the API i
       };
       await uploadResponse(req, res);
       });
+
       it("should return a 400 status with an error message if no file is uploaded", async () => {
       const req = {};
       const res = {
@@ -472,9 +474,9 @@ Unit testing focuses on testing individual functions and components of the API i
       };
       await uploadResponse(req, res);
 
-          });
-
       });
+
+  });
 
 #### getResponse
 
@@ -548,7 +550,7 @@ Unit testing focuses on testing individual functions and components of the API i
 
             expect(response).to.have.status(200);
             expect(response.body).to.deep.equal({
-                error: "File deleted successfully",
+               error: "File deleted successfully",
             });
         });
 
