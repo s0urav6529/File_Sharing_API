@@ -438,27 +438,27 @@ Unit testing focuses on testing individual functions and components of the API i
   1.  The function should return a JSON response with keys when a file is uploaded.
   2.  The function should return a 400 status with an error message if no file is uploaded.
 
-      describe("uploadResponse", () => {
-      it("should retrun a JSON response with public and private keys", async () => {
-      const req = {
-      file: {
-      filename: "testfile.txt", //"testfile.txt" is the demo file name for testing
-      },
-      };
-      const res = {
-      json: (data) => {
-      expect(data).to.deep.equal({
-      "public key": "testfile.txt",
-      "private key": "testfile.txt",
-      });
-      },
-      status: (statusCode) => {
-      expect(statusCode).to.equal(200);
-      return res;
-      },
-      };
-      await uploadResponse(req, res);
-      });
+            describe("uploadResponse", () => {
+                it("should retrun a JSON response with public and private keys", async () => {
+                    const req = {
+                        file: {
+                            filename: "testfile.txt", //"testfile.txt" is the demo file name for testing
+                        },
+                    };
+                    const res = {
+                        json: (data) => {
+                            expect(data).to.deep.equal({
+                                "public key": "testfile.txt",
+                                "private key": "testfile.txt",
+                            });
+                        },
+                        status: (statusCode) => {
+                            expect(statusCode).to.equal(200);
+                            return res;
+                        },
+                    };
+                await uploadResponse(req, res);
+            });
 
             it("should return a 400 status with an error message if no file is uploaded", async () => {
             const req = {};
