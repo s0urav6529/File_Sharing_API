@@ -22,15 +22,15 @@ MY Node.js application is a basic API server built using Express.js. It provides
 
 ****Upload a File (POST /files):**** This endpoint allows clients to upload files. The uploaded files are processed by the postRoute module.
 
-                  app.use("/files", postRoute);
+    app.use("/files", postRoute);
 
 ****Retrieve a List of Files (GET /files):**** Clients can access this endpoint to fetch a list of files. The getRoute module handles this functionality.
 
-                  app.use("/files", getRoute);
+    app.use("/files", getRoute);
 
 ****Delete a File (DELETE /files):**** This endpoint enables clients to delete files. The deleteRoute module is responsible for handling file deletions.
 
-                  app.use("/files", deleteRoute);
+    app.use("/files", deleteRoute);
 
 ******Middleware******
 
@@ -38,29 +38,24 @@ MY Node.js application is a basic API server built using Express.js. It provides
 
 ****JSON and URL Encoding:**** I use the express.json() middleware to parse JSON request bodies and **bodyParser.urlencoded()** middleware to handle URL-encoded data in requests.
 
-                // json body parser
-                app.use(express.json());
-                app.use(bodyParser.urlencoded({ extended: true }));
+    // json body parser
+    app.use(express.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
 
 ****Scheduled Task:**** I have implemented a scheduled task using node-cron. This task runs at midnight (00:00) every day and is responsible for cleaning up files that have been inactive for seven days. The fileCleanupCheck function handles this task.
 
-cron.schedule("0 0 * * *", () => {
-
-  const cleanupPeriod = 7 * 24 * 60 * 60 * 1000; 
-  
-  fileCleanupCheck(cleanupPeriod);
-  
-});
+    cron.schedule("0 0 * * *", () => {
+      const cleanupPeriod = 7 * 24 * 60 * 60 * 1000; 
+      fileCleanupCheck(cleanupPeriod);
+    });
 
 ******Deployment******
 
 The application listens on a port specified in my environment variables (retrieved using process.env.PORT). This is where clients can connect to access my API.
 
-server.listen(process.env.PORT, () => {
-
-  console.log(`Listening to the post ${process.env.PORT}`);
-  
-});
+    server.listen(process.env.PORT, () => {
+      console.log(`Listening to the post ${process.env.PORT}`);
+    });
 
 
 **postRoute endpoint description**
@@ -88,84 +83,47 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 
 **uploadLimiter**: Applied to the POST / route, this middleware limits the number of incoming requests to prevent network abuse.
 
-const uploadLimiter = rateLimit({
-
-  windowMs: time,
-  
-  max: maxlimit,
-  
-  message: "You exit maximum upload per day",
-  
-});
+    const uploadLimiter = rateLimit({
+      windowMs: time,
+      max: maxlimit,
+      message: "You exit maximum upload per day",
+    });
 
 **multer with storage:** Used to configure the file storage settings for handling file uploads.
 
-const storage = multer.diskStorage({
-
-  destination: (req, file, cb) => {
-  
-    cb(null, uploadFolder);
-    
-  },
-  
-  filename: (req, file, cb) => {
-  
-    const fileExtention = path.extname(file.originalname);
-    
-
-    const originalFileName = file.originalname;
-    
-    let fileName;
-    
-    if (originalFileName.startsWith("tmp")) {
-    
-      // for testing purpose of code
-      
-      fileName =
-        originalFileName.replace(fileExtention, "").split(" ").join("-") +
-        fileExtention;
-        
-    } else {
-    
+    const storage = multer.diskStorage({
+      destination: (req, file, cb) => {
+      cb(null, uploadFolder);
+    },
+    filename: (req, file, cb) => {
+      const fileExtention = path.extname(file.originalname);
+      const originalFileName = file.originalname;
+      let fileName;
+      if (originalFileName.startsWith("tmp")) {
+        // for testing purpose of code
+        fileName = originalFileName.replace(fileExtention, "").split(" ").join("-") +fileExtention;
+      } else {
       // for actual code
-      
-      fileName =
-        originalFileName.replace(fileExtention, "").split(" ").join("-") +
-        "-" +
-        Date.now() +
-        fileExtention;
-        
-    }
-
-    cb(null, fileName);
-    
-  },
-  
-});
+        fileName =  originalFileName.replace(fileExtention, "").split(" ").join("-") + "-" +  Date.now() + fileExtention;
+      }
+      cb(null, fileName);
+    },
+  });
 
 
 **Controller**
 
 **uploadResponse**: This controller is responsible for handling the logic and response generation for file uploads. It is executed after a file is successfully uploaded.
 
-const uploadResponse = async (req, res) => {
-
-  if (!req.file) {
-  
-    return res.status(400).json({ error: "No file uploaded" });
-    
-  }
-  
-  res.json({
-  
-    "public key": req.file.filename,
-    
-    "private key": req.file.filename,
-    
-  });
-  
-};
-
+  const uploadResponse = async (req, res) => {
+    if (!req.file) {
+       return res.status(400).json({ error: "No file uploaded" });
+    }
+    res.json({
+      "public key": req.file.filename,
+      "private key": req.file.filename,
+    });
+  };
 
 **Error Handling**
 
