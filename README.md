@@ -60,6 +60,49 @@ I initialize my **Express** application by creating an instance of it and settin
       fileCleanupCheck(cleanupPeriod);
     });
 
+Here, funtions for cleanup inactivefiles files from cloud storage
+
+    const remover = async (file) => {
+        try {
+         await filesModel.deleteOne({ name: file });
+        } catch (error) {
+             console.error("Error removing file", error);
+        }
+    };
+
+That is the called function from main app to do the file cleaner work if any file inactive for a certain period.
+
+    const fileCleanupCheck = async (cleanupPeriod) => {
+    const cleanupTimestamp = Date.now() - cleanupPeriod;
+
+    fs.readdir(filesPath, (error, files) => {
+        if (error) {
+        console.error("Error reading file directory", error);
+        return;
+        }
+
+        files.forEach((file) => {
+        const currentFilePath = `${filesPath}/${file}`;
+        fs.stat(currentFilePath, (statError, stats) => {
+            if (statError) {
+            console.error("Error getting file stats", statError);
+            } else {
+            if (stats.mtimeMs < cleanupTimestamp) {
+                remover(file);
+                fs.unlink(currentFilePath, (removeError) => {
+                if (removeError) {
+                    console.error("Error removing file", removeError);
+                } else {
+                    console.log(`File named ${file} removed successfully`);
+                }
+                });
+            }
+            }
+        });
+        });
+    });
+    };
+
 ### Deployment
 
 The application listens on a port specified in my environment variables (retrieved using process.env.PORT). This is where clients can connect to access my API.
