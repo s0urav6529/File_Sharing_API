@@ -6,15 +6,29 @@
 
 MY Node.js application is a basic API server built using Express.js. It provides endpoints for uploading files, retrieving a list of files, and deleting files. Additionally, it includes a scheduled task using node-cron for file cleanup.
 
-******Application Structure******
+******Application Structure-----******
 
 **My application consists of the following components:**
 
 ****External Modules:**** I have imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance my API.
 
+    const bodyParser = require("body-parser");
+    const express = require("express");
+    const dotenv = require("dotenv").config();
+    const http = require("http");
+    const cron = require("node-cron");
+
+
 ****Internal Modules:**** I've organized your application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
 
+    const postRoute = require("./routes/postRoute");
+    const getRoute = require("./routes/getRoute");
+    const deleteRoute = require("./routes/deleteRoute");
+    const fileCleanupCheck = require("./utilities/fileCleanupCheck");
+
 ****Express Application Setup:**** I initialize your **Express** application by creating an instance of it and setting up necessary **middleware**.
+
+    const app = express();
 
 ******API Endpoints******
 
@@ -58,7 +72,9 @@ The application listens on a port specified in my environment variables (retriev
     });
 
 
-**PostRoute Endpoint Description**
+
+
+**PostRoute Endpoint Description-----**
 
 The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
 
@@ -67,8 +83,11 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 **External Modules**
 
 **express**: The Express.js framework for building web applications.
-**randomstring**: A module used for generating random strings.
 **multer**: A middleware for handling file uploads.
+
+    const express = require("express");
+    const postRoute = express.Router();
+    const multer = require("multer");
 
 **Internal Modules**
 
@@ -77,6 +96,10 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 **uploadLimiter**: A custom middleware for rate limiting incoming requests, to prevent network abuse.
 
 **uploadResponse**: A controller responsible for handling the file upload process.
+
+    const storage = require("../middleware/fileuploader");
+    const { uploadLimiter } = require("../middleware/networkLimit");
+    const uploadResponse = require("../controllers/postController");
 
 
 **Middleware**
@@ -130,7 +153,9 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 Any errors that occur during the request handling process, such as exceeding rate limits, file upload failures, or processing errors within the uploadResponse controller, should be appropriately handled and may result in error responses sent to the client.
 
 
-**GetRoute Endpoint Description**
+
+
+**GetRoute Endpoint Description-----**
 
 The gostRoute is an Express.js router designed to handle GET requests to retrieve a file based on a specified public key. It serves as part of your application's routing system, responding to requests and sending the corresponding file to the client if it exists.
 
@@ -184,6 +209,9 @@ If the file exists, determine its MIME type based on the file extension. Set the
 
 **Error Handling**
 The function includes error handling to deal with potential issues, such as the file not being found or an internal server error. In these cases, appropriate HTTP response codes and error messages are provided to the client.
+
+
+
 
 
 
