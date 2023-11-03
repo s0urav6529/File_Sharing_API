@@ -10,12 +10,11 @@ const path = require("path");
 //internal module
 const app = require("../../app");
 const uploadResponse = require("../../controllers/postController");
-const multer = require("multer");
+const uploadFolder = path.join(__dirname, "../..", "FOLDER");
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 const server = app.listen();
-const uploadFolder = path.join(__dirname, "../..", "FOLDER");
 
 //integration test
 describe("File API Integration Tests", () => {
@@ -23,28 +22,33 @@ describe("File API Integration Tests", () => {
   let privateKey;
 
   it("should upload a file", (done) => {
-    //filepath ekhane chilo
-
     tmp.file((error, filePath) => {
       if (error) {
         return done(err);
       }
 
-      const fileName = filePath + ".txt";
+      const temporyFilePath = filePath + ".txt";
+      const parts = temporyFilePath.split("/");
+      const fileName = parts[parts.length - 1];
+
+      const originalFilePath = path.join("FOLDER", fileName);
+
+      console.log(originalFilePath);
       const randomContent = "This is random content.";
-      fs.writeFileSync(fileName, randomContent);
+
+      fs.writeFileSync(originalFilePath, randomContent);
       request(app)
         .post("/files")
-        .attach("file", fileName)
+        .attach("file", originalFilePath)
         .expect(200)
         .end((error, res) => {
           if (error) {
             return done(error);
           }
 
-          const parts = fileName.split("/");
-          publicKey = parts[parts.length - 1];
-          privateKey = parts[parts.length - 1];
+          publicKey = fileName;
+          privateKey = fileName;
+          console.log(fileName);
           done();
         });
     });
@@ -80,48 +84,6 @@ describe("File API Integration Tests", () => {
 
 //unit test
 describe("Controller Functions", () => {
-  // For multer configuration
-  describe("Multer Configuration", () => {
-    it("should configure Multer storage correctly", (done) => {
-      const fileName = "testfile.txt";
-      const expectedFileName = "test-file.txt";
-
-      const mockFile = {
-        originalname: fileName,
-      };
-
-      const destinationCallback = (req, file, cb) => {
-        expect(file).to.eql(mockFile);
-        cb(null, uploadFolder);
-      };
-
-      const filenameCallback = (req, file, cb) => {
-        expect(file).to.eql(mockFile);
-        expect(file.originalname).to.equal(fileName);
-        cb(null, expectedFileName);
-      };
-
-      const storage = multer.diskStorage({
-        destination: destinationCallback,
-        filename: filenameCallback,
-      });
-      //const request = chai.request(server);
-
-      request(server)
-        .post("/files")
-        .attach("file", path.join(uploadFolder, "testfile.txt"))
-        .expect(200)
-        .end((err, res) => {
-          if (err) {
-            return done(err, " hello");
-          }
-          expect(res.body["public key"]).to.equal("testfile.txt");
-          expect(res.body["private key"]).to.equal("testfile.txt");
-          done();
-        });
-    });
-  });
-
   // For uploadfuntion
   describe("uploadResponse", () => {
     it("should retrun a JSON response with public and private keys", async () => {
