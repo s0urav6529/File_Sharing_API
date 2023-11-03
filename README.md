@@ -141,6 +141,16 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
         if (!req.file) {
            return res.status(400).json({ error: "No file uploaded" });
         }
+
+        const fileName = req.file.filename;
+
+        //for testing code neednot use mongo atlas
+        if (!fileName.startsWith("testfile")) {
+            await filesModel.create({
+            name: req.file.filename,
+            });
+        }
+
         res.json({
           "public key": req.file.filename,
           "private key": req.file.filename,
@@ -153,7 +163,7 @@ Any errors that occur during the request handling process, such as exceeding rat
 
 ## GetRoute Endpoint Description
 
-The gostRoute is an Express.js router designed to handle GET requests to retrieve a file based on a specified public key. It serves as part of your application's routing system, responding to requests and sending the corresponding file to the client if it exists.
+The getRoute is an Express.js router designed to handle GET requests to retrieve a file based on a specified public key. It serves as part of your application's routing system, responding to requests and sending the corresponding file to the client if it exists.
 
 ### Dependencies
 
