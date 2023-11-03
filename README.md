@@ -77,8 +77,11 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 **multer**: A middleware for handling file uploads.
 
 **Internal Modules**
+
 **storage**: A custom middleware for handling file storage, presumably for configuring where uploaded files are stored.
+
 **uploadLimiter**: A custom middleware for rate limiting incoming requests, to prevent network abuse.
+
 **uploadResponse**: A controller responsible for handling the file upload process.
 
 
@@ -86,11 +89,84 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 
 **uploadLimiter**: Applied to the POST / route, this middleware limits the number of incoming requests to prevent network abuse.
 
+const uploadLimiter = rateLimit({
+
+  windowMs: time,
+  
+  max: maxlimit,
+  
+  message: "You exit maximum upload per day",
+  
+});
+
 **multer with storage:** Used to configure the file storage settings for handling file uploads.
+
+const storage = multer.diskStorage({
+
+  destination: (req, file, cb) => {
+  
+    cb(null, uploadFolder);
+    
+  },
+  
+  filename: (req, file, cb) => {
+  
+    const fileExtention = path.extname(file.originalname);
+    
+
+    const originalFileName = file.originalname;
+    
+    let fileName;
+    
+    if (originalFileName.startsWith("tmp")) {
+    
+      // for testing purpose of code
+      
+      fileName =
+        originalFileName.replace(fileExtention, "").split(" ").join("-") +
+        fileExtention;
+        
+    } else {
+    
+      // for actual code
+      
+      fileName =
+        originalFileName.replace(fileExtention, "").split(" ").join("-") +
+        "-" +
+        Date.now() +
+        fileExtention;
+        
+    }
+
+    cb(null, fileName);
+    
+  },
+  
+});
+
 
 **Controller**
 
 **uploadResponse**: This controller is responsible for handling the logic and response generation for file uploads. It is executed after a file is successfully uploaded.
+
+const uploadResponse = async (req, res) => {
+
+  if (!req.file) {
+  
+    return res.status(400).json({ error: "No file uploaded" });
+    
+  }
+  
+  res.json({
+  
+    "public key": req.file.filename,
+    
+    "private key": req.file.filename,
+    
+  });
+  
+};
+
 
 **Error Handling**
 
