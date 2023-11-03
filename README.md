@@ -360,25 +360,26 @@ To perform integration tests, we use the following tools and libraries:
                 return done(err);
            }
 
-          const temporyFilePath = filePath + ".txt";
-          const parts = temporyFilePath.split("/");
-          const fileName = parts[parts.length - 1];
 
-          const originalFilePath = path.join("FOLDER", fileName);
+        const temporyFilePath = filePath + ".txt";
+        const parts = temporyFilePath.split("/");
+        const temporaryFileName = parts[parts.length - 1];
 
-          console.log(originalFilePath);
-          const randomContent = "This is random content.";
+        const fileName = temporaryFileName.replace("tmp", "testfile");
 
-          fs.writeFileSync(originalFilePath, randomContent);
-          request(app) .post("/files")  .attach("file", originalFilePath)  .expect(200)  .end((error, res) => {
-              if (error) {
+        const originalFilePath = path.join("FOLDER", fileName);
+
+        const randomContent = "This is random content.";
+
+        fs.writeFileSync(originalFilePath, randomContent);
+        request(app) .post("/files")  .attach("file", originalFilePath)  .expect(200)  .end((error, res) => {
+            if (error) {
                 return done(error);
-              }
-
-              publicKey = fileName;
-              privateKey = fileName;
-              console.log(fileName);
-              done();
+            }
+            publicKey = fileName;
+            privateKey = fileName;
+            console.log(fileName);
+            done();
             });
         });
       });
@@ -434,45 +435,46 @@ Unit testing focuses on testing individual functions and components of the API i
   2. Test that the function returns a 400 status with an error message if no file is uploaded.
 - Expected Outcomes:
 
-  1. The function should return a JSON response with keys when a file is uploaded.
-  2. The function should return a 400 status with an error message if no file is uploaded.
+  1.  The function should return a JSON response with keys when a file is uploaded.
+  2.  The function should return a 400 status with an error message if no file is uploaded.
 
-     describe("uploadResponse", () => {
-     it("should retrun a JSON response with public and private keys", async () => {
-     const req = {
-     file: {
-     filename: "testfile.txt", //"testfile.txt" is the demo file name for testing
-     },
-     };
-     const res = {
-     json: (data) => {
-     expect(data).to.deep.equal({
-     "public key": "testfile.txt",
-     "private key": "testfile.txt",
-     });
-     },
-     status: (statusCode) => {
-     expect(statusCode).to.equal(200);
-     return res;
-     },
-     };
-     await uploadResponse(req, res);
-     });
+      describe("uploadResponse", () => {
+      it("should retrun a JSON response with public and private keys", async () => {
+      const req = {
+      file: {
+      filename: "testfile.txt", //"testfile.txt" is the demo file name for testing
+      },
+      };
+      const res = {
+      json: (data) => {
+      expect(data).to.deep.equal({
+      "public key": "testfile.txt",
+      "private key": "testfile.txt",
+      });
+      },
+      status: (statusCode) => {
+      expect(statusCode).to.equal(200);
+      return res;
+      },
+      };
+      await uploadResponse(req, res);
+      });
+      it("should return a 400 status with an error message if no file is uploaded", async () => {
+      const req = {};
+      const res = {
+      json: (data) => {
+      expect(data).to.deep.equal({ error: "No file uploaded" });
+      },
+      status: (statusCode) => {
+      expect(statusCode).to.equal(400);
+      return res;
+      },
+      };
+      await uploadResponse(req, res);
 
-     it("should return a 400 status with an error message if no file is uploaded", async () => {
-     const req = {};
-     const res = {
-     json: (data) => {
-     expect(data).to.deep.equal({ error: "No file uploaded" });
-     },
-     status: (statusCode) => {
-     expect(statusCode).to.equal(400);
-     return res;
-     },
-     };
-     await uploadResponse(req, res);
-     });
-     });
+          });
+
+      });
 
 #### getResponse
 
