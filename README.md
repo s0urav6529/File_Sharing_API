@@ -7,7 +7,8 @@ MY Node.js application is a basic API server built using Express.js. It provides
 
 ### My application consists of the following components:
 
-### External Modules: I have imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance my API.
+### External Modules: 
+I have imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance my API.
 
     const bodyParser = require("body-parser");
     const express = require("express");
@@ -16,34 +17,34 @@ MY Node.js application is a basic API server built using Express.js. It provides
     const cron = require("node-cron");
 
 
-****Internal Modules:**** I've organized your application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
+### Internal Modules: 
+I've organized your application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
 
     const postRoute = require("./routes/postRoute");
     const getRoute = require("./routes/getRoute");
     const deleteRoute = require("./routes/deleteRoute");
     const fileCleanupCheck = require("./utilities/fileCleanupCheck");
 
-****Express Application Setup:**** I initialize your **Express** application by creating an instance of it and setting up necessary **middleware**.
+### Express Application Setup
+I initialize your **Express** application by creating an instance of it and setting up necessary **middleware**.
 
     const app = express();
 
-******API Endpoints******
+### API Endpoints
 
-**I have defined three main API endpoints:**
-
-****Upload a File (POST /files):**** This endpoint allows clients to upload files. The uploaded files are processed by the postRoute module.
+**Upload a File (POST /files):** This endpoint allows clients to upload files. The uploaded files are processed by the postRoute module.
 
     app.use("/files", postRoute);
 
-****Retrieve a List of Files (GET /files):**** Clients can access this endpoint to fetch a list of files. The getRoute module handles this functionality.
+**Retrieve a List of Files (GET /files):** Clients can access this endpoint to fetch a list of files. The getRoute module handles this functionality.
 
     app.use("/files", getRoute);
 
-****Delete a File (DELETE /files):**** This endpoint enables clients to delete files. The deleteRoute module is responsible for handling file deletions.
+**Delete a File (DELETE /files):** This endpoint enables clients to delete files. The deleteRoute module is responsible for handling file deletions.
 
     app.use("/files", deleteRoute);
 
-******Middleware******
+### Middleware
 
 **I've configured middleware to enhance your API's functionality:**
 
