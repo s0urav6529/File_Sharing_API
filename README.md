@@ -3,7 +3,6 @@
 
 ********API Documentation for File_Sharing_API Application********
 
-******Overview******
 
 MY Node.js application is a basic API server built using Express.js. It provides endpoints for uploading files, retrieving a list of files, and deleting files. Additionally, it includes a scheduled task using node-cron for file cleanup.
 
@@ -41,13 +40,17 @@ app.use("/files", deleteRoute);
 
 // json body parser
 app.use(express.json());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 ****Scheduled Task:**** I have implemented a scheduled task using node-cron. This task runs at midnight (00:00) every day and is responsible for cleaning up files that have been inactive for seven days. The fileCleanupCheck function handles this task.
 
 cron.schedule("0 0 * * *", () => {
-  const cleanupPeriod = 7 * 24 * 60 * 60 * 1000; // for 7 days of inactivity
+
+  const cleanupPeriod = 7 * 24 * 60 * 60 * 1000; 
+  
   fileCleanupCheck(cleanupPeriod);
+  
 });
 
 ******Deployment******
@@ -55,6 +58,8 @@ cron.schedule("0 0 * * *", () => {
 The application listens on a port specified in your environment variables (retrieved using process.env.PORT). This is where clients can connect to access your API.
 
 server.listen(process.env.PORT, () => {
+
   console.log(`Listening to the post ${process.env.PORT}`);
+  
 });
 
