@@ -58,7 +58,7 @@ The application listens on a port specified in my environment variables (retriev
     });
 
 
-**postRoute endpoint description**
+**PostRoute Endpoint Description**
 
 The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
 
@@ -128,5 +128,64 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 **Error Handling**
 
 Any errors that occur during the request handling process, such as exceeding rate limits, file upload failures, or processing errors within the uploadResponse controller, should be appropriately handled and may result in error responses sent to the client.
+
+
+**GetRoute Endpoint Description**
+
+The gostRoute is an Express.js router designed to handle GET requests to retrieve a file based on a specified public key. It serves as part of your application's routing system, responding to requests and sending the corresponding file to the client if it exists.
+
+**Dependencies**
+
+**path**: Used to construct the file path based on the public key and folder.
+**fs**: Used to access and stream the file to the client.
+**mime**: Used to determine the MIME type of the file based on its extension.
+
+**MIME Type Determination**
+The postRoute function uses the "mime" library to determine the MIME type of the file based on its extension. This ensures that the response includes the correct "Content-Type" header, which helps the client's browser interpret the file correctly.
+
+    const path = require("path");
+    const fs = require("fs");
+    const mime = require("mime");
+
+**Functionality**
+
+The postRoute function performs the following key tasks:
+
+Construct the file path based on the provided public key.
+
+    const filePath = path.join("FOLDER", req.params.publicKey);
+                
+Check if the file specified by the public key exists in the designated folder.
+
+    await fs.access(filePath, fs.constants.F_OK, (error) => {
+      if (error) {
+        res
+          .status(404)
+          .json({ error: `The file ${req.params.publicKey} does not exist` });
+      } 
+
+If the file exists, determine its MIME type based on the file extension. Set the response headers to indicate the content type. Create a readable stream for the file and pipe it to the HTTP response.
+
+    else {
+        //get the mime type for the current file
+        const fileExtension = path.extname(filePath).slice(1);
+
+        // Determine the MIME type based on the file extension
+        const mimeType = mime.getType(fileExtension);
+
+        // Set the response headers
+        res.setHeader("Content-Type", mimeType);
+
+        // Create a readable stream and pipe it to the response
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+      }
+    });
+
+**Error Handling**
+The function includes error handling to deal with potential issues, such as the file not being found or an internal server error. In these cases, appropriate HTTP response codes and error messages are provided to the client.
+
+
+
 
 
