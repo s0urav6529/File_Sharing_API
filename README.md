@@ -377,7 +377,7 @@ Unit testing focuses on testing individual functions and components of the API i
 
 ### Controller Functions
 
-#### 1. `uploadResponse`
+#### uploadResponse
 
 - Test Description: This unit test checks the behavior of the `uploadResponse` function, which handles file upload requests.
 - Test Scenarios:
@@ -387,7 +387,44 @@ Unit testing focuses on testing individual functions and components of the API i
   1. The function should return a JSON response with keys when a file is uploaded.
   2. The function should return a 400 status with an error message if no file is uploaded.
 
-#### 2. `getResponse`
+         describe("uploadResponse", () => {
+            it("should retrun a JSON response with public and private keys", async () => {
+          const req = {
+            file: {
+              filename: "testfile.txt", //"testfile.txt" is the demo file name for testing
+            },
+          };
+          const res = {
+            json: (data) => {
+              expect(data).to.deep.equal({
+                "public key": "testfile.txt",
+                "private key": "testfile.txt",
+              });
+            },
+            status: (statusCode) => {
+              expect(statusCode).to.equal(200);
+              return res;
+            },
+          };
+          await uploadResponse(req, res);
+        });
+
+         it("should return a 400 status with an error message if no file is uploaded", async () => {
+          const req = {};
+          const res = {
+            json: (data) => {
+              expect(data).to.deep.equal({ error: "No file uploaded" });
+            },
+            status: (statusCode) => {
+                  expect(statusCode).to.equal(400);
+                  return res;
+                },
+              };
+              await uploadResponse(req, res);
+           });
+          });
+
+#### getResponse
 
 - Test Description: This unit test examines the behavior of the `getResponse` function, which handles file download requests.
 - Test Scenarios:
@@ -396,8 +433,44 @@ Unit testing focuses on testing individual functions and components of the API i
 - Expected Outcomes:
   1. The function should return the file content with the correct MIME type.
   2. The function should return a 404 status with an error message if the file does not exist.
+ 
+             describe("getResponse", () => {
+                it("should return the file content with the correct MIME type", async () => {
+                  const req = {
+                params: {
+                  publicKey: "testfile.txt",
+                },
+              };
+              const res = chai.request(server);
 
-#### 3. `deleteResponse`
+              const response = await res.get(`/files/${req.params.publicKey}`);
+    
+              expect(response).to.have.status(200);
+    
+              const fileExtension = path.extname(req.params.publicKey).slice(1);
+              const mimeType = mime.getType(fileExtension);
+
+              expect(response).to.have.header("Content-Type", mimeType);
+            });
+
+                it("should return a 404 status with an error message if the file does not exist", async () => {
+                  const req = {
+                    params: {
+                  publicKey: "nonexistentfile.txt",
+                },
+              };
+              const res = chai.request(server);
+
+              const response = await res.get(`/files/${req.params.publicKey}`);
+
+                  expect(response).to.have.status(404);
+                  expect(response.body).to.deep.equal({
+                    error: `The file ${req.params.publicKey} does not exist`,
+                  });
+            });
+          });
+
+#### deleteResponse
 
 - Test Description: This unit test evaluates the behavior of the `deleteResponse` function, which handles file deletion requests.
 - Test Scenarios:
@@ -406,6 +479,40 @@ Unit testing focuses on testing individual functions and components of the API i
 - Expected Outcomes:
   1. The function should return a 200 status with a success message on successful deletion.
   2. The function should return a 404 status with an error message if the file does not exist.
+ 
+         describe("deleteResponse", () => {
+            it("should return a 200 status with a success message on successful deletion", async () => {
+          const req = {
+            params: {
+                  privateKey: "testfile.txt",
+                },
+              };
+              const res = chai.request(server);
+
+              const response = await res.delete(`/files/${req.params.privateKey}`);
+    
+              expect(response).to.have.status(200);
+              expect(response.body).to.deep.equal({
+                error: "File deleted successfully",
+              });
+            });
+
+            it("should return a 404 status with an error message if the file does not exist", async () => {
+                  const req = {
+                    params: {
+                      privateKey: "nonexistentfile.txt",
+                    },
+                  };
+                  const res = chai.request(server); // Assuming you have an Express app
+
+                  const response = await res.delete(`/files/${req.params.privateKey}`);
+
+                  expect(response).to.have.status(404);
+                  expect(response.body).to.deep.equal({
+                    error: `The file ${req.params.privateKey} does not exist`,
+                  });
+            });
+          });
 
 ## Conclusion
 
