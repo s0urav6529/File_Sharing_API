@@ -68,6 +68,16 @@ The application listens on a port specified in my environment variables (retriev
       console.log(`Listening to the post ${process.env.PORT}`);
     });
 
+## Database Configuration for Cloud Storage
+
+Use mongo atlas for cloud storage & here is the connection code for configure mongo atlas to our API
+
+    const databaseConnection = async () => {
+    mongoose.connect(process.env.MONGOURL)
+        .then(console.log("Database connection established!"))
+        .catch((err) => console("Database not connected"));
+    };
+
 ## PostRoute Endpoint Description
 
 The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
