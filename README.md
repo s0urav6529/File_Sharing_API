@@ -16,12 +16,14 @@ Imported external modules such as **body-parser, express, dotenv, http, and node
     const http = require("http");
     const cron = require("node-cron");
 
-I've organized my application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
+I've organized my application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute,databaseConnection and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.And databaseConnection is used for connect cloud storage (mongo Atlas).
 
+    const databaseConnection = require("./configuration/databaseConnection");
     const postRoute = require("./routes/postRoute");
     const getRoute = require("./routes/getRoute");
     const deleteRoute = require("./routes/deleteRoute");
     const fileCleanupCheck = require("./utilities/fileCleanupCheck");
+    databaseConnection();
 
 ### Express Application Setup
 
@@ -172,7 +174,6 @@ The postRoute function performs the following key tasks:
 Construct the file path based on the provided public key.
 
     const filePath = path.join("FOLDER", req.params.publicKey);
-
 
 Check if the file specified by the public key exists in the designated folder.
 
