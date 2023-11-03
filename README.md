@@ -7,8 +7,9 @@ MY Node.js application is a basic API server built using Express.js. It provides
 
 ### My application consists of the following components:
 
-### External Modules: 
-I have imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance my API.
+### Dependencies (External Modules & Internal Modules)
+
+Imported external modules such as **body-parser, express, dotenv, http, and node-cron** to build and enhance my API.
 
     const bodyParser = require("body-parser");
     const express = require("express");
@@ -16,9 +17,7 @@ I have imported external modules such as **body-parser, express, dotenv, http, a
     const http = require("http");
     const cron = require("node-cron");
 
-
-### Internal Modules: 
-I've organized your application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
+I've organized my application into separate modules for different functionality, including **postRoute, getRoute, deleteRoute, and fileCleanupCheck**. These modules are used for handling specific **routes** and **tasks**.
 
     const postRoute = require("./routes/postRoute");
     const getRoute = require("./routes/getRoute");
