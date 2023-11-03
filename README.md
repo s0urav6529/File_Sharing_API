@@ -171,6 +171,18 @@ The gostRoute is an Express.js router designed to handle GET requests to retriev
     const fs = require("fs");
     const mime = require("mime");
 
+
+**Middleware**
+
+**downloadLimiter**: Applied to the get / route, this middleware limits the number of download requests to prevent network abuse.
+
+    const downloadLimiter = rateLimit({
+      windowMs: time,
+      max: maxlimit,
+      message: "You exit maximum download per day",
+    });
+
+
 **Functionality**
 
 The postRoute function performs the following key tasks:
@@ -257,4 +269,94 @@ Checks if the file with the constructed path exists. If the file exists, it atte
 
 If the file with the provided privateKey does not exist, a 404 error is returned with the message "The file does not exist."
 
+
+
+# API Documentation for Integration and Unit Testing
+
+## Introduction
+
+This document provides theoretical documentation for the integration and unit testing of an API. The API in question is a file management system that allows users to upload, download, and delete files. The testing is divided into two parts: Integration Testing and Unit Testing.
+
+## Integration Testing
+
+Integration testing involves testing the API as a whole to ensure that its various components work together seamlessly. The focus is on testing the API's endpoints and their interactions.
+
+### Test Environment Setup
+
+To perform integration tests, we use the following tools and libraries:
+
+- **Supertest**: A library for making HTTP requests to the API.
+- **Chai**: A test assertion library.
+- **Chai-Http**: A plugin for Chai to make HTTP requests.
+- **fs**: Node.js's file system module for handling file operations.
+- **mime**: A library for working with MIME types.
+- **tmp**: A library for creating temporary files and directories.
+- **path**: Node.js's path module for working with file paths.
+
+### Integration Test Suite
+
+#### 1. Uploading a File
+
+- Test Description: This test ensures that files can be uploaded successfully through the API.
+- Test Steps:
+  1. Generate a temporary file with random content.
+  2. Attach the file to the API request.
+  3. Verify that the API returns a status code of 200.
+- Expected Outcome: The file should be uploaded successfully.
+
+#### 2. Downloading a File
+
+- Test Description: This test checks the ability to download a file by its public key.
+- Test Steps:
+  1. Send an HTTP GET request to the API with the public key of the file to download.
+  2. Verify that the API returns a status code of 200 and the correct MIME type.
+- Expected Outcome: The file should be successfully downloaded with the correct MIME type.
+
+#### 3. Deleting a File
+
+- Test Description: This test verifies the ability to delete a file by its private key.
+- Test Steps:
+  1. Send an HTTP DELETE request to the API with the private key of the file to delete.
+  2. Verify that the API returns a status code of 200.
+- Expected Outcome: The file should be deleted successfully.
+
+## Unit Testing
+
+Unit testing focuses on testing individual functions and components of the API in isolation. In this case, we will test the controller functions responsible for handling file operations.
+
+### Controller Functions
+
+#### 1. `uploadResponse`
+
+- Test Description: This unit test checks the behavior of the `uploadResponse` function, which handles file upload requests.
+- Test Scenarios:
+  1. Test that the function returns a JSON response with public and private keys when a file is uploaded.
+  2. Test that the function returns a 400 status with an error message if no file is uploaded.
+- Expected Outcomes:
+  1. The function should return a JSON response with keys when a file is uploaded.
+  2. The function should return a 400 status with an error message if no file is uploaded.
+
+#### 2. `getResponse`
+
+- Test Description: This unit test examines the behavior of the `getResponse` function, which handles file download requests.
+- Test Scenarios:
+  1. Test that the function returns the file content with the correct MIME type.
+  2. Test that the function returns a 404 status with an error message if the file does not exist.
+- Expected Outcomes:
+  1. The function should return the file content with the correct MIME type.
+  2. The function should return a 404 status with an error message if the file does not exist.
+
+#### 3. `deleteResponse`
+
+- Test Description: This unit test evaluates the behavior of the `deleteResponse` function, which handles file deletion requests.
+- Test Scenarios:
+  1. Test that the function returns a 200 status with a success message on successful deletion.
+  2. Test that the function returns a 404 status with an error message if the file does not exist.
+- Expected Outcomes:
+  1. The function should return a 200 status with a success message on successful deletion.
+  2. The function should return a 404 status with an error message if the file does not exist.
+
+## Conclusion
+
+This documentation outlines the integration and unit testing procedures for the file management API. Integration tests ensure that the API functions correctly as a whole, while unit tests verify the behavior of individual components and controller functions. A successful testing process helps ensure the reliability and functionality of the API.
 
