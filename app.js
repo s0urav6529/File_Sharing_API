@@ -6,10 +6,12 @@ const http = require("http");
 const cron = require("node-cron");
 
 // internal modules
+const databaseConnection = require("./configuration/databaseConnection");
 const postRoute = require("./routes/postRoute");
 const getRoute = require("./routes/getRoute");
 const deleteRoute = require("./routes/deleteRoute");
 const fileCleanupCheck = require("./utilities/fileCleanupCheck");
+databaseConnection();
 
 // use express
 const app = express();

@@ -29,11 +29,12 @@ describe("File API Integration Tests", () => {
 
       const temporyFilePath = filePath + ".txt";
       const parts = temporyFilePath.split("/");
-      const fileName = parts[parts.length - 1];
+      const temporaryFileName = parts[parts.length - 1];
+
+      const fileName = temporaryFileName.replace("tmp", "testfile");
 
       const originalFilePath = path.join("FOLDER", fileName);
 
-      console.log(originalFilePath);
       const randomContent = "This is random content.";
 
       fs.writeFileSync(originalFilePath, randomContent);
@@ -48,7 +49,6 @@ describe("File API Integration Tests", () => {
 
           publicKey = fileName;
           privateKey = fileName;
-          console.log(fileName);
           done();
         });
     });

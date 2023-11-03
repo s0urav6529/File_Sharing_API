@@ -2,13 +2,24 @@
 const fs = require("fs");
 const path = require("path");
 
+//internal module
+const filesModel = require("../models/filesModel");
+
 //variable
 const filesPath = path.join(__dirname, "..", "/FOLDER");
 
-console.log();
+//for remove file from database
+
+const remover = async (file) => {
+  try {
+    await filesModel.deleteOne({ name: file });
+  } catch (error) {
+    console.error("Error removing file", error);
+  }
+};
 
 //funtions for cleanup inactivefiles
-const fileCleanupCheck = (cleanupPeriod) => {
+const fileCleanupCheck = async (cleanupPeriod) => {
   const cleanupTimestamp = Date.now() - cleanupPeriod;
 
   fs.readdir(filesPath, (error, files) => {
@@ -24,6 +35,7 @@ const fileCleanupCheck = (cleanupPeriod) => {
           console.error("Error getting file stats", statError);
         } else {
           if (stats.mtimeMs < cleanupTimestamp) {
+            remover(file);
             fs.unlink(currentFilePath, (removeError) => {
               if (removeError) {
                 console.error("Error removing file", removeError);

@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 
     const originalFileName = file.originalname;
     let fileName;
-    if (originalFileName.startsWith("tmp")) {
+    if (originalFileName.startsWith("testfile")) {
       // for testing purpose of code
       fileName =
         originalFileName.replace(fileExtention, "").split(" ").join("-") +
