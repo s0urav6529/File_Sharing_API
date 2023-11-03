@@ -74,7 +74,7 @@ The application listens on a port specified in my environment variables (retriev
 
 The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
 
-**Dependencies**
+### Dependencies
 
 **External Modules**
 
@@ -98,7 +98,7 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
     const uploadResponse = require("../controllers/postController");
 
 
-**Middleware**
+### Middleware
 
 **uploadLimiter**: Applied to the POST / route, this middleware limits the number of incoming requests to prevent network abuse.
 
@@ -130,7 +130,7 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
   });
 
 
-**Controller**
+### Controller
 
 **uploadResponse**: This controller is responsible for handling the logic and response generation for file uploads. It is executed after a file is successfully uploaded.
 
@@ -144,18 +144,18 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
         });
     };
 
-**Error Handling**
+### Error Handling
 
 Any errors that occur during the request handling process, such as exceeding rate limits, file upload failures, or processing errors within the uploadResponse controller, should be appropriately handled and may result in error responses sent to the client.
 
 
 
 
-**GetRoute Endpoint Description-----**
+## GetRoute Endpoint Description
 
 The gostRoute is an Express.js router designed to handle GET requests to retrieve a file based on a specified public key. It serves as part of your application's routing system, responding to requests and sending the corresponding file to the client if it exists.
 
-**Dependencies**
+### Dependencies
 
 **path**: Used to construct the file path based on the public key and folder.
 **fs**: Used to access and stream the file to the client.
@@ -168,7 +168,7 @@ The gostRoute is an Express.js router designed to handle GET requests to retriev
     const mime = require("mime");
 
 
-**Middleware**
+### Middleware
 
 **downloadLimiter**: Applied to the get / route, this middleware limits the number of download requests to prevent network abuse.
 
@@ -179,7 +179,7 @@ The gostRoute is an Express.js router designed to handle GET requests to retriev
     });
 
 
-**Functionality**
+### Functionality
 
 The postRoute function performs the following key tasks:
 
@@ -214,19 +214,19 @@ If the file exists, determine its MIME type based on the file extension. Set the
       }
     });
 
-**Error Handling**
+### Error Handling
 
 The function includes error handling to deal with potential issues, such as the file not being found or an internal server error. In these cases, appropriate HTTP response codes and error messages are provided to the client.
 
 
 
 
-**DeleteRoute Endpoint Description-----**
+## DeleteRoute Endpoint Description
 
 To use the Delete Route API, send a DELETE request to the specified endpoint, providing the :privateKey parameter in the URL path. The :privateKey parameter is used to identify and delete the resource associated with the provided private key.
 
 
-**Dependencies**
+### Dependencies
 
 **path**: Used to construct the file path based on the public key and folder.
 **fs**: Used to access and stream the file to the client.
@@ -234,7 +234,7 @@ To use the Delete Route API, send a DELETE request to the specified endpoint, pr
     const path = require("path");
     const fs = require("fs");
 
-**Functionality**
+### Functionality
 
 Constructs the file path using the privateKey provided in the URL.
 
@@ -261,7 +261,7 @@ Checks if the file with the constructed path exists. If the file exists, it atte
       }
 
 
-**Error Handling**
+### Error Handling
 
 If the file with the provided privateKey does not exist, a 404 error is returned with the message "The file does not exist."
 
