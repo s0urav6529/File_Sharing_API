@@ -138,15 +138,15 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
 
 **uploadResponse**: This controller is responsible for handling the logic and response generation for file uploads. It is executed after a file is successfully uploaded.
 
-  const uploadResponse = async (req, res) => {
-    if (!req.file) {
-       return res.status(400).json({ error: "No file uploaded" });
-    }
-    res.json({
-      "public key": req.file.filename,
-      "private key": req.file.filename,
-    });
-  };
+    const uploadResponse = async (req, res) => {
+        if (!req.file) {
+           return res.status(400).json({ error: "No file uploaded" });
+        }
+        res.json({
+          "public key": req.file.filename,
+          "private key": req.file.filename,
+        });
+    };
 
 **Error Handling**
 
@@ -165,8 +165,7 @@ The gostRoute is an Express.js router designed to handle GET requests to retriev
 **fs**: Used to access and stream the file to the client.
 **mime**: Used to determine the MIME type of the file based on its extension.
 
-**MIME Type Determination**
-The postRoute function uses the "mime" library to determine the MIME type of the file based on its extension. This ensures that the response includes the correct "Content-Type" header, which helps the client's browser interpret the file correctly.
+**MIME Type Determination**: The postRoute function uses the "mime" library to determine the MIME type of the file based on its extension. This ensures that the response includes the correct "Content-Type" header, which helps the client's browser interpret the file correctly.
 
     const path = require("path");
     const fs = require("fs");
@@ -208,12 +207,54 @@ If the file exists, determine its MIME type based on the file extension. Set the
     });
 
 **Error Handling**
+
 The function includes error handling to deal with potential issues, such as the file not being found or an internal server error. In these cases, appropriate HTTP response codes and error messages are provided to the client.
 
 
 
 
+**DeleteRoute Endpoint Description-----**
+
+To use the Delete Route API, send a DELETE request to the specified endpoint, providing the :privateKey parameter in the URL path. The :privateKey parameter is used to identify and delete the resource associated with the provided private key.
 
 
+**Dependencies**
+
+**path**: Used to construct the file path based on the public key and folder.
+**fs**: Used to access and stream the file to the client.
+
+    const path = require("path");
+    const fs = require("fs");
+
+**Functionality**
+
+Constructs the file path using the privateKey provided in the URL.
+
+    const filePath = path.join("FOLDER", req.params.privateKey);
+
+Checks if the file with the constructed path exists. If the file exists, it attempts to delete the file. Responds with the appropriate status and message based on the success or failure of the file deletion.
+
+    try {
+        await fs.access(filePath, fs.constants.F_OK, (error) => {
+        if (error) {
+            res.status(404).json({ error: `The file ${req.params.privateKey} does not exist` });
+        } else {
+            fs.unlink(filePath, (error) => {
+            if (error) {
+                res.status(404).json({error: `The file ${req.params.privateKey} does not exist`,});
+            } else {
+                res.status(200).json({ error: "File deleted successfully" });
+            }
+         });
+        }
+        });
+      } catch (error) {
+        res.status(404).json({ error: `The file ${req.params.privateKey} does not exist` });
+      }
+
+
+**Error Handling**
+
+If the file with the provided privateKey does not exist, a 404 error is returned with the message "The file does not exist."
 
 
