@@ -74,9 +74,8 @@ The application listens on a port specified in my environment variables (retriev
 
 The postRoute is an Express.js router designed to handle POST requests for uploading files. This route is part of a larger application and includes various modules and middleware for managing file uploads and network rate limiting.
 
-### Dependencies
+### Dependencies (External Modules & Internal Modules)
 
-**External Modules**
 
 **express**: The Express.js framework for building web applications.
 **multer**: A middleware for handling file uploads.
@@ -85,7 +84,6 @@ The postRoute is an Express.js router designed to handle POST requests for uploa
     const postRoute = express.Router();
     const multer = require("multer");
 
-**Internal Modules**
 
 **storage**: A custom middleware for handling file storage, presumably for configuring where uploaded files are stored.
 
